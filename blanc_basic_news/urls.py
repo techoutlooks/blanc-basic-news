@@ -1,9 +1,9 @@
-from django.conf.urls import url
+from django.conf.urls import patterns, url
+from . import feeds
+from . import views
 
-from . import feeds, views
 
-
-urlpatterns = [
+urlpatterns = patterns('',
     # RSS feed
     url(r'^feed/$',
         feeds.BasicNewsFeed(),
@@ -25,4 +25,4 @@ urlpatterns = [
     url(r'^(?P<year>\d{4})/(?P<month>\d{2})/(?P<day>\d{2})/(?P<slug>[-\w]+)/$',
         views.PostDetailView.as_view(),
         name='post-detail'),
-]
+)

@@ -1,15 +1,16 @@
-from django.conf import settings
+from django.views.generic import ArchiveIndexView, MonthArchiveView, DateDetailView
 from django.shortcuts import get_object_or_404
-from django.views.generic import ArchiveIndexView, DateDetailView, MonthArchiveView
-
-from .models import Category, Post
+from django.conf import settings
+from .models import Category
+from . import get_post_model
 
 
 class PostListView(ArchiveIndexView):
-    queryset = Post.objects.select_related().filter(published=True)
+    queryset = get_post_model().objects.select_related().filter(published=True)
     date_field = 'date'
     paginate_by = getattr(settings, 'NEWS_PER_PAGE', 10)
-    template_name_suffix = '_list'
+    #template_name_suffix = '_list'
+    template_name = 'news/post_list.html'
     context_object_name = 'object_list'
 
 
@@ -28,12 +29,13 @@ class PostListCategoryView(PostListView):
 
 
 class PostListMonthView(MonthArchiveView):
-    queryset = Post.objects.select_related().filter(published=True)
+    queryset = get_post_model().objects.select_related().filter(published=True)
     month_format = '%m'
     date_field = 'date_url'
 
 
 class PostDetailView(DateDetailView):
-    queryset = Post.objects.select_related().filter(published=True)
+    queryset = get_post_model().objects.select_related().filter(published=True)
     month_format = '%m'
     date_field = 'date_url'
+    template_name = 'news/post_detail.html'

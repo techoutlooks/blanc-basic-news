@@ -1,11 +1,11 @@
 from django.conf import settings
-from django.contrib.sites.models import Site
-from django.contrib.syndication.views import Feed
 from django.core.urlresolvers import reverse_lazy
-from django.shortcuts import get_object_or_404
+from django.contrib.syndication.views import Feed
+from django.contrib.sites.models import Site
 from django.utils import timezone
-
-from .models import Category, Post
+from django.shortcuts import get_object_or_404
+from .models import Category
+from . import get_post_model
 
 
 class BasicNewsFeed(Feed):
@@ -14,7 +14,8 @@ class BasicNewsFeed(Feed):
 
     def items(self):
         feed_limit = getattr(settings, 'NEWS_FEED_LIMIT', 10)
-        return Post.objects.filter(published=True, date__lte=timezone.now())[:feed_limit]
+        return get_post_model().objects.filter(published=True,
+                                               date__lte=timezone.now())[:feed_limit]
 
     def item_description(self, obj):
         return obj.content
@@ -38,5 +39,6 @@ class BasicNewsCategoryFeed(BasicNewsFeed):
 
     def items(self, obj):
         feed_limit = getattr(settings, 'NEWS_FEED_LIMIT', 10)
-        return Post.objects.filter(
-            published=True, date__lte=timezone.now(), category=obj)[:feed_limit]
+        return get_post_model().objects.filter(published=True,
+                                               date__lte=timezone.now(),
+                                               category=obj)[:feed_limit]
