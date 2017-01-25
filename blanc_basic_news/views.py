@@ -2,7 +2,7 @@ from django.views.generic import ArchiveIndexView, MonthArchiveView, DateDetailV
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 from .models import Category
-from . import get_post_model
+from . import get_post_model, get_category_model
 
 
 class PostListView(ArchiveIndexView):
@@ -19,7 +19,7 @@ class PostListCategoryView(PostListView):
 
     def get_queryset(self):
         qs = super(PostListCategoryView, self).get_queryset()
-        self.category = get_object_or_404(Category, slug=self.kwargs['slug'])
+        self.category = get_object_or_404(get_category_model(), slug=self.kwargs['slug'])
         return qs.filter(category=self.category)
 
     def get_context_data(self, **kwargs):
